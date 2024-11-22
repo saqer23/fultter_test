@@ -5,6 +5,7 @@ import './login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'user_manager.dart';
+import 'drug_interaction_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -172,8 +173,10 @@ class _HomePageState extends State<HomePage> {
       body = AddMedicineForm();
     } else if (_selectedIndex == 2 && username == 'admin') {
       body = MedicinePreviewForm(medicines: _medicines);
-    } else {
+    } else if (_selectedIndex == 3) {
       body = MedicinePreviewSearch(medicines: _medicines);
+    } else {
+      body = DrugInteractionPage();
     }
     if (username == 'admin') {
       return Scaffold(
@@ -198,6 +201,10 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.search, color: Colors.black),
               label: 'معاينة',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.info, color: Colors.black),
+              label: 'نبذة تعريفية',
             ),
           ],
           currentIndex: _selectedIndex,
