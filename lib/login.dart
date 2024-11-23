@@ -5,11 +5,21 @@ import 'dart:convert';
 import './main.dart';
 import 'user_manager.dart'; // Import the UserManager
 
-class LoginScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  LoginScreen({super.key});
+  String _displayInfo = '';
 
   Future<void> login(
       BuildContext context, String username, String password) async {
@@ -22,10 +32,8 @@ class LoginScreen extends StatelessWidget {
         },
         body: jsonEncode({'username': username, 'password': password}),
       );
-      print('Response status code: ${jsonEncode({
-            'username': username,
-            'password': password
-          })}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         // Save the username if it is "admin"
         if (username.toLowerCase() == 'admin') {
@@ -38,11 +46,15 @@ class LoginScreen extends StatelessWidget {
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       } else {
-        // Handle error
-        print('Login failed: ${response.body}');
+        // Handle error and set message
+        setState(() {
+          _displayInfo = 'اسم المستخدم او الرقم السري خاطئ';
+        });
       }
     } catch (e) {
-      print('Error: $e');
+      setState(() {
+        _displayInfo = 'حدث خطأ أثناء الاتصال بالخادم: $e';
+      });
     }
   }
 
@@ -136,6 +148,16 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            if (_displayInfo.isNotEmpty)
+              Text(
+                _displayInfo,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
           ],
         ),
       ),
